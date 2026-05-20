@@ -371,23 +371,38 @@
         </div> <!-- End Grid -->
     </section>
 
-    <!-- 8. FINAL CTA BLOCK -->
-    <section class="py-12 px-4 bg-gray-100 bg-linen text-center border-t-8 border-brand-dark">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="font-body font-black text-4xl md:text-6xl uppercase tracking-tight mb-6 text-brand-dark leading-tight">
-                DO NOT BE THE PERSON WHO READ THIS AND DID NOT RSVP.
-            </h2>
-            
-            <div class="flex items-center justify-center gap-4 mb-8">
-                <svg class="w-10 h-10 md:w-14 md:h-14 text-brand-blue animate-bounce-x drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                <p class="font-display text-5xl md:text-7xl text-brand-dark tracking-widest drop-shadow-sm m-0">
-                    <span class="spot-counter text-brand-blue">47</span> OF 50 SPOTS LEFT.
-                </p>
+    <!-- 8. DROP ALERTS SIGNUP -->
+    <section class="py-16 px-4 bg-gray-100 bg-linen text-center border-t-8 border-brand-dark">
+        <div class="max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 bg-brand-dark px-4 py-2 rounded-full mb-6">
+                <span class="w-2 h-2 rounded-full bg-brand-cyan animate-pulse"></span>
+                <span class="font-body font-black text-brand-cyan text-xs tracking-[0.25em] uppercase">Stay In The Loop</span>
             </div>
 
-            <button onclick="scrollToForm()" class="w-full md:w-auto px-16 py-6 bg-brand-dark hover:bg-black text-white font-display text-4xl md:text-5xl uppercase tracking-widest transition-all duration-300 shadow-xl rounded-sm">
-                LOCK MY FREE DRINK NOW
-            </button>
+            <h2 class="font-display text-6xl md:text-8xl uppercase tracking-wide mb-4 text-brand-dark leading-none">
+                DROP ALERTS
+            </h2>
+
+            <p class="font-body text-xl md:text-2xl text-brand-dark font-bold max-w-2xl mx-auto mb-2">
+                Get in the loop for future events at Culture House NYC.
+            </p>
+            <p class="font-body text-lg md:text-xl text-gray-600 font-semibold max-w-2xl mx-auto mb-8">
+                Be the first to know when the next list opens. No spam, just the drop.
+            </p>
+
+            <form id="drop-alerts-form" onsubmit="handleDropAlertsSubmit(event)" class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+                <input type="email" required placeholder="you@email.com" class="flex-grow bg-white border-2 border-gray-300 px-5 py-4 font-body font-bold text-brand-dark focus:outline-none focus:border-brand-blue transition-colors text-lg rounded-md">
+                <button type="submit" class="bg-brand-dark hover:bg-brand-blue text-white font-display text-2xl md:text-3xl px-8 py-4 uppercase tracking-widest transition-all duration-300 shadow-xl rounded-md whitespace-nowrap">
+                    Notify Me
+                </button>
+            </form>
+
+            <div id="drop-alerts-thanks" class="hidden mt-6 inline-flex items-center gap-2 bg-brand-blue text-white px-6 py-3 rounded-full font-body font-black uppercase tracking-widest text-sm shadow-lg">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                You're on the list. Watch your inbox.
+            </div>
+
+            <p class="font-body text-gray-500 text-xs font-bold uppercase tracking-widest mt-6">Unsubscribe anytime . We never share your email</p>
         </div>
     </section>
 
@@ -635,6 +650,15 @@
                 localStorage.setItem('ch_spots_left', spots);
                 updateSpotDisplays(spots);
             }
+        }
+
+        // 6. DROP ALERTS SIGNUP
+        function handleDropAlertsSubmit(event) {
+            event.preventDefault();
+            const form = document.getElementById('drop-alerts-form');
+            const thanks = document.getElementById('drop-alerts-thanks');
+            form.classList.add('hidden');
+            thanks.classList.remove('hidden');
         }
 
         // INIT ALL
