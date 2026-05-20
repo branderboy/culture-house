@@ -591,6 +591,38 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        // ============================================================
+        // CONFIG — edit these values to tune the page. Everything below
+        // this block is wiring and should rarely need to change.
+        // ============================================================
+        const CONFIG = {
+            // Spot counter (the "47 drinks redemptions left" chip)
+            SPOTS_START: 47,            // Starting count for new visitors
+            SPOTS_FLOOR: 5,             // Never auto-drops below this
+            SPOTS_DROP_MIN: 3,          // Min decrement per elapsed day
+            SPOTS_DROP_MAX: 4,          // Max decrement per elapsed day
+            EVENT_START_DATE: '2026-06-06', // Counter freezes on/after this day (YYYY-MM-DD)
+
+            // Countdown timer in the top bar
+            COUNTDOWN_DAYS: 2,
+            COUNTDOWN_HOURS: 14,
+            COUNTDOWN_MINUTES: 33,
+            COUNTDOWN_SECONDS: 12,
+
+            // Social proof popups (bottom-left)
+            TICKER_MIN_PER_VISIT: 4,    // Minimum popups shown in one visit
+            TICKER_MAX_PER_VISIT: 6,    // Maximum popups shown in one visit
+            TICKER_FIRST_DELAY_MIN_MS: 12000,   // First popup appears after this min delay
+            TICKER_FIRST_DELAY_MAX_MS: 20000,   // ...and at most this delay
+            TICKER_GAP_MIN_MS: 25000,           // Min gap between popups
+            TICKER_GAP_MAX_MS: 45000,           // Max gap between popups
+            TICKER_VISIBLE_MS: 4500,            // How long each popup stays on screen
+
+            // Form submission endpoint (Formsubmit.co — no signup, no API key)
+            FORM_ENDPOINT: 'https://formsubmit.co/ajax/kawani@digiwaxx.com'
+        };
+        // ============================================================
+
         // 1. SCROLL TO FORM
         function scrollToForm() {
             const form = document.getElementById('rsvp-section');
@@ -605,11 +637,11 @@
         }
 
         // 3. LAYER 2: LIVE SPOT COUNTER LOGIC
-        // Drops by 1 once per calendar day up until the event start. Persists
-        // across reloads via localStorage and only ever goes down.
-        const SPOTS_START = 47;
-        const SPOTS_FLOOR = 5; // Never auto-drop below this — leaves room for real RSVPs
-        const EVENT_START_DATE = '2026-06-06';
+        // Drops daily up until the event start. Persists across reloads via
+        // localStorage and only ever goes down.
+        const SPOTS_START = CONFIG.SPOTS_START;
+        const SPOTS_FLOOR = CONFIG.SPOTS_FLOOR;
+        const EVENT_START_DATE = CONFIG.EVENT_START_DATE;
 
         function todayKey() {
             const d = new Date();
@@ -639,8 +671,9 @@
                 const elapsed = daysBetween(lastDay, today);
                 if (elapsed > 0) {
                     let drop = 0;
+                    const range = CONFIG.SPOTS_DROP_MAX - CONFIG.SPOTS_DROP_MIN + 1;
                     for (let i = 0; i < elapsed; i++) {
-                        drop += 3 + Math.floor(Math.random() * 2); // 3 or 4 per day
+                        drop += CONFIG.SPOTS_DROP_MIN + Math.floor(Math.random() * range);
                     }
                     spots = Math.max(SPOTS_FLOOR, spots - drop);
                     localStorage.setItem('ch_spots_left', spots);
@@ -678,8 +711,7 @@
             
             if (!targetTime) {
                 const now = new Date().getTime();
-                // 2 Days, 14 Hrs, 33 Mins, 12 Secs in milliseconds
-                const offset = (2 * 24 * 60 * 60 * 1000) + (14 * 60 * 60 * 1000) + (33 * 60 * 1000) + (12 * 1000);
+                const offset = (CONFIG.COUNTDOWN_DAYS * 24 * 60 * 60 * 1000) + (CONFIG.COUNTDOWN_HOURS * 60 * 60 * 1000) + (CONFIG.COUNTDOWN_MINUTES * 60 * 1000) + (CONFIG.COUNTDOWN_SECONDS * 1000);
                 targetTime = now + offset;
                 localStorage.setItem('ch_target_time', targetTime);
             } else {
@@ -714,11 +746,11 @@
         }
 
         // 5. FORM SUBMISSION HANDLING
-        // Formsubmit.co AJAX endpoint — no API key, no signup. First submission
-        // triggers a one-time activation email to the address below; click the
-        // confirmation link there once and every future submission lands in
-        // that inbox.
-        const FORM_ENDPOINT = 'https://formsubmit.co/ajax/kawani@digiwaxx.com';
+        // Formsubmit.co AJAX endpoint (set in CONFIG above). No API key, no
+        // signup. First submission triggers a one-time activation email to
+        // the address in CONFIG.FORM_ENDPOINT; click the confirmation link
+        // and every future submission lands in that inbox.
+        const FORM_ENDPOINT = CONFIG.FORM_ENDPOINT;
 
         async function handleFormSubmit(event) {
             event.preventDefault();
@@ -785,7 +817,8 @@
             const tickerText = document.getElementById('ticker-text');
             if (!ticker || !tickerText) return;
 
-            const total = 4 + Math.floor(Math.random() * 3); // 4–6 per visit
+            const span = CONFIG.TICKER_MAX_PER_VISIT - CONFIG.TICKER_MIN_PER_VISIT + 1;
+            const total = CONFIG.TICKER_MIN_PER_VISIT + Math.floor(Math.random() * span);
             let shown = 0;
             let lastName = '', lastAction = '';
 
@@ -807,16 +840,16 @@
                 setTimeout(() => {
                     ticker.classList.remove('opacity-100', 'translate-y-0');
                     ticker.classList.add('opacity-0', 'translate-y-4');
-                }, 4500);
+                }, CONFIG.TICKER_VISIBLE_MS);
                 shown++;
                 if (shown < total) {
-                    const gap = 25000 + Math.random() * 20000; // 25–45s between alerts
+                    const gap = CONFIG.TICKER_GAP_MIN_MS + Math.random() * (CONFIG.TICKER_GAP_MAX_MS - CONFIG.TICKER_GAP_MIN_MS);
                     setTimeout(showNextAlert, gap);
                 }
             }
 
-            // First alert 12–20 seconds after page load
-            setTimeout(showNextAlert, 12000 + Math.random() * 8000);
+            const firstDelay = CONFIG.TICKER_FIRST_DELAY_MIN_MS + Math.random() * (CONFIG.TICKER_FIRST_DELAY_MAX_MS - CONFIG.TICKER_FIRST_DELAY_MIN_MS);
+            setTimeout(showNextAlert, firstDelay);
         }
 
         // 6. CALENDAR + SHARE
