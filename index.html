@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Hour RSVP | Culture House NYC</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800;900&family=Permanent+Marker&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0A1118', /* Deep navy/slate matching the flyer night sky */
+                            darker: '#05080C',
+                            card: '#131C2A', 
+                            blue: '#0044FF', /* Electric blue from flyer */
+                            cyan: '#00AEEF', /* Cyan from website footer */
+                            yellow: '#FFEA00', /* Electric yellow for event times */
+                            white: '#FFFFFF',
+                            light: '#F8FAFC',
+                            red: '#FF3B30'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Bebas Neue', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                        script: ['Permanent Marker', 'cursive']
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "linear-gradient(to bottom, rgba(10, 17, 24, 0.75), rgba(10, 17, 24, 0.95)), url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2574&auto=format&fit=crop')",
+                        'texture': "url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.08%22/%3E%3C/svg%3E')",
+                        'linen': "repeating-linear-gradient(90deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 4px), repeating-linear-gradient(0deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 4px)"
+                    },
+                    keyframes: {
+                        'bounce-x': {
+                            '0%, 100%': { transform: 'translateX(-25%)', animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)' },
+                            '50%': { transform: 'translateX(0)', animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)' }
+                        }
+                    },
+                    animation: {
+                        'bounce-x': 'bounce-x 1s infinite'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #F8FAFC; /* Clean off-white core background */
+            color: #0A1118;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .brush-highlight {
+            position: relative;
+            display: inline-block;
+            z-index: 1;
+        }
+        
+        .brush-highlight::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: -5%;
+            width: 110%;
+            height: 80%;
+            background-color: #0044FF;
+            z-index: -1;
+            transform: rotate(-2deg);
+            border-radius: 2px;
+        }
+
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F8FAFC;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94A3B8;
+        }
+    </style>
+</head>
+<body class="font-body pb-24 md:pb-0 relative overflow-x-hidden">
+    <div class="fixed inset-0 pointer-events-none z-0 bg-texture mix-blend-multiply opacity-[0.2]"></div>
+
+    <!-- LAYER 3: TIME SCARCITY (TOP BAR) -->
+    <div class="fixed top-0 left-0 w-full bg-brand-cyan border-b-4 border-brand-blue z-50 px-4 py-2 text-center shadow-lg">
+        <p class="font-body font-black text-brand-darker text-sm md:text-base uppercase m-0 leading-none tracking-widest flex items-center justify-center flex-wrap gap-2">
+            <span>DOORS OPEN IN: <span id="countdown-timer" class="font-display tracking-widest text-lg md:text-xl relative top-[2px] ml-1">02D : 14H : 33M : 12S</span></span>
+            <span class="hidden md:inline text-brand-darker opacity-50">•</span>
+            <span class="bg-brand-dark text-white px-3 py-1 rounded-sm shadow-sm flex items-center gap-2">ONLY <svg class="w-4 h-4 text-white animate-bounce-x" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg> <span class="spot-counter font-display text-xl relative top-[1px] text-white">47</span> FREE DRINKS LEFT</span>
+        </p>
+    </div>
+
+    <!-- 2. HERO SECTION (Mimicking Flyer exactly) -->
+    <header class="relative pt-24 pb-16 px-4 bg-brand-dark text-brand-white bg-hero-pattern bg-cover bg-center bg-no-repeat border-b-[8px] border-brand-blue">
+        <div class="max-w-4xl mx-auto flex flex-col items-center">
+            
+            <!-- Top Script -->
+            <div class="w-full text-left md:text-center mb-4 pl-4 md:pl-0 mt-6">
+                <p class="font-body font-black text-brand-cyan tracking-[0.2em] uppercase text-xs md:text-sm mb-6 drop-shadow-md">
+                    THINGS TO DO IN NYC AFTER WORK
+                </p>
+                <h2 class="font-script text-brand-light text-3xl md:text-5xl leading-tight transform -rotate-2 opacity-90">
+                    Pull Up.<br class="md:hidden"> Kick Back.<br class="md:hidden"> Create A Moment.
+                </h2>
+            </div>
+            
+            <!-- Main Title Stack recreating the flyer typography -->
+            <div class="relative text-center w-full mb-6">
+                <h1 class="font-display text-[7rem] md:text-[13rem] leading-[0.8] text-white tracking-normal drop-shadow-2xl">
+                    HAPPY
+                </h1>
+                <h1 class="font-script text-[6rem] md:text-[11rem] leading-[0.5] text-brand-blue transform -rotate-3 absolute top-[50%] md:top-[60%] left-0 right-0 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
+                    HOUR
+                </h1>
+            </div>
+
+            <!-- Subtitle -->
+            <div class="flex items-center gap-4 mt-8 md:mt-16 mb-2 text-white">
+                <span class="text-brand-blue font-display text-4xl md:text-5xl">@</span>
+                <h3 class="font-body font-black text-3xl md:text-5xl tracking-widest uppercase">CULTURE HOUSE</h3>
+            </div>
+            
+            <div class="flex items-center gap-4 w-full max-w-md mx-auto mb-10">
+                <div class="h-[2px] flex-grow bg-brand-blue"></div>
+                <div class="text-center">
+                    <p class="font-body font-bold text-brand-blue tracking-[0.2em] md:tracking-[0.3em] uppercase text-sm md:text-base whitespace-nowrap mb-1">
+                        958 6th Ave, New York, NY 10001
+                    </p>
+                    <p class="font-body font-semibold text-gray-300 tracking-widest uppercase text-xs">
+                        Located in: Herald Square Park
+                    </p>
+                </div>
+                <div class="h-[2px] flex-grow bg-brand-blue"></div>
+            </div>
+
+            <!-- LAYER 2: SPOT COUNTER -->
+            <div class="mb-8 flex items-center justify-center gap-3 font-body font-black text-xl md:text-2xl uppercase tracking-widest bg-brand-card/90 border border-brand-blue/50 text-white px-6 py-4 rounded shadow-2xl">
+                <span class="flex items-center text-white animate-bounce-x">
+                    <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </span>
+                <span>
+                    <span class="spot-counter text-white font-display text-4xl relative top-[2px] mr-2">47</span> of 50 spots left
+                </span>
+                <span class="almost-gone-text hidden ml-2 text-brand-red animate-pulse">ALMOST GONE</span>
+            </div>
+
+            <button onclick="scrollToForm()" class="w-full md:w-auto max-w-md bg-brand-blue hover:bg-white hover:text-brand-blue text-white font-display text-4xl md:text-5xl px-12 py-5 uppercase tracking-wider transition-all duration-300 transform hover:scale-105 shadow-[0_0_30px_rgba(0,68,255,0.6)] rounded-sm">
+                CLAIM MY FREE DRINK NOW
+            </button>
+            <p class="mt-4 font-body text-gray-400 text-xs md:text-sm tracking-widest uppercase font-bold">
+                21+ Only . We email you the QR
+            </p>
+        </div>
+
+        <!-- WHAT YOU WALK INTO (Transparent Flyer Style) -->
+        <div class="mt-10 md:mt-16 max-w-6xl mx-auto w-full px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-y-12 w-full items-end">
+                <!-- Icon 1 -->
+                <div class="flex flex-col items-center text-center border-r-2 border-brand-blue px-2">
+                    <svg class="w-12 h-12 md:w-16 md:h-16 text-white mb-4 drop-shadow-[0_0_10px_rgba(0,68,255,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+                    <h3 class="font-display text-2xl md:text-4xl uppercase tracking-widest text-white leading-none">Great Music</h3>
+                </div>
+                
+                <!-- Icon 2 -->
+                <div class="flex flex-col items-center text-center md:border-r-2 border-brand-blue px-2">
+                    <svg class="w-12 h-12 md:w-16 md:h-16 text-white mb-4 transform -rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    <h3 class="font-display text-2xl md:text-4xl uppercase tracking-widest text-white leading-none">Karaoke</h3>
+                </div>
+
+                <!-- Icon 3 -->
+                <div class="flex flex-col items-center text-center border-r-2 border-brand-blue px-2">
+                    <svg class="w-12 h-12 md:w-16 md:h-16 text-white mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m2.1 21.8 6.4-6.3"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m19 5-8 8"></path>
+                    </svg>
+                    <h3 class="font-display text-2xl md:text-4xl uppercase tracking-widest text-white leading-tight">Drinks<br>+ Bites</h3>
+                </div>
+
+                <!-- Icon 4 -->
+                <div class="flex flex-col items-center text-center px-2">
+                    <svg class="w-12 h-12 md:w-16 md:h-16 text-white mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4" stroke-width="1.5"></circle></svg>
+                    <h3 class="font-display text-2xl md:text-4xl uppercase tracking-widest text-white leading-tight">Content<br>Friendly</h3>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. THE OFFER BLOCK (Clean, light background) -->
+    <section class="py-8 px-4 max-w-4xl mx-auto text-center">
+        <h2 class="font-display text-5xl md:text-7xl mb-6 uppercase tracking-wide text-brand-dark">
+            <span class="brush-highlight text-white">HERE IS THE DEAL.</span>
+        </h2>
+        
+        <div class="flex flex-col gap-3 font-body text-xl md:text-2xl text-brand-dark font-bold max-w-2xl mx-auto mb-6">
+            <p>First 50 to RSVP get a free welcome drink on arrival.</p>
+            <p>Show your QR at the door. Drink in hand. Done.</p>
+            <p class="text-brand-red font-display tracking-widest text-3xl md:text-4xl mt-2">ONCE 50 IS GONE, IT IS GONE.</p>
+        </div>
+    </section>
+
+    <!-- BRAND SEPARATOR -->
+    <div class="w-full max-w-2xl mx-auto flex items-center justify-center my-4 px-4 opacity-90">
+        <div class="h-[4px] flex-grow bg-brand-dark rounded-l-full"></div>
+        <div class="h-[4px] w-20 bg-brand-blue mx-1.5"></div>
+        <div class="h-[4px] w-6 bg-brand-cyan rounded-r-full"></div>
+    </div>
+
+    <!-- 6. THE SCHEDULE (Flyer style layout - Full Width) -->
+    <section class="py-2 w-full mb-4 overflow-hidden relative">
+        <h2 class="font-script text-brand-blue text-5xl md:text-6xl text-center mt-2 mb-4 transform -rotate-1">Opening Weekend</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200 mb-2 w-full max-w-7xl mx-auto">
+            <!-- Friday -->
+            <div onclick="selectDateAndScroll('fri-june-6')" class="cursor-pointer group p-8 md:p-10 text-center hover:bg-white transition-all duration-300 w-full rounded-2xl hover:shadow-xl">
+                <h3 class="font-body font-black text-brand-blue text-xl md:text-2xl uppercase tracking-widest mb-2">FRIDAY</h3>
+                <p class="font-script text-brand-dark text-5xl md:text-6xl mb-4 group-hover:scale-110 transition-transform">June 6</p>
+                <p class="font-display text-4xl text-brand-dark mb-6">5PM – 8PM</p>
+                <div class="inline-flex items-center justify-center gap-2 bg-brand-darker px-4 py-2 font-body font-bold text-white text-sm tracking-widest uppercase rounded shadow-md">
+                    <svg class="w-4 h-4 text-white animate-bounce-x" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <span><span class="spot-counter text-lg text-white">47</span> SPOTS LEFT</span>
+                </div>
+            </div>
+
+            <!-- Saturday -->
+            <div onclick="selectDateAndScroll('sat-june-7')" class="cursor-pointer group p-10 md:p-12 text-center hover:bg-white transition-all duration-300 w-full rounded-2xl hover:shadow-xl">
+                <h3 class="font-body font-black text-brand-blue text-xl md:text-2xl uppercase tracking-widest mb-2">SATURDAY</h3>
+                <p class="font-script text-brand-dark text-5xl md:text-6xl mb-4 group-hover:scale-110 transition-transform">June 7</p>
+                <p class="font-display text-4xl text-brand-dark mb-6">3PM – 6PM</p>
+                <div class="inline-flex items-center justify-center gap-2 bg-brand-darker px-4 py-2 font-body font-bold text-white text-sm tracking-widest uppercase rounded shadow-md">
+                    <svg class="w-4 h-4 text-white animate-bounce-x" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <span><span class="spot-counter text-lg text-white">47</span> SPOTS LEFT</span>
+                </div>
+            </div>
+
+            <!-- Sunday -->
+            <div onclick="selectDateAndScroll('sun-june-8')" class="cursor-pointer group p-10 md:p-12 text-center hover:bg-white transition-all duration-300 w-full rounded-2xl hover:shadow-xl">
+                <h3 class="font-body font-black text-brand-blue text-xl md:text-2xl uppercase tracking-widest mb-2">SUNDAY</h3>
+                <p class="font-script text-brand-dark text-5xl md:text-6xl mb-4 group-hover:scale-110 transition-transform">June 8</p>
+                <p class="font-display text-4xl text-brand-dark mb-6">3PM – 6PM</p>
+                <div class="inline-flex items-center justify-center gap-2 bg-brand-darker px-4 py-2 font-body font-bold text-white text-sm tracking-widest uppercase rounded shadow-md">
+                    <svg class="w-4 h-4 text-white animate-bounce-x" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <span><span class="spot-counter text-lg text-white">47</span> SPOTS LEFT</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. THE FORM (Clean White/Gray Premium Card) -->
+    <section id="rsvp-section" class="pt-2 pb-8 px-4 max-w-6xl mx-auto scroll-mt-24 mb-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+            
+            <!-- LEFT COLUMN: Q&A -->
+            <div class="order-2 lg:order-1 pt-0 lg:pt-4 flex flex-col gap-8">
+                <div>
+                    <h2 class="font-display text-6xl md:text-7xl uppercase tracking-wide mb-2 text-brand-dark">
+                        THE DETAILS.
+                    </h2>
+                    <div class="w-16 h-2 bg-brand-blue mb-8"></div>
+                </div>
+
+                <div>
+                    <h3 class="font-body font-black text-brand-dark uppercase tracking-widest text-xl mb-3">What is the catch?</h3>
+                    <p class="font-body text-gray-600 text-lg leading-relaxed font-bold">You show up. That is it. Show your QR at the door, get your drink, hang out. No timeshare pitch. No upsell. No catch.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-body font-black text-brand-dark uppercase tracking-widest text-xl mb-3">Why RSVP if it is free?</h3>
+                    <p class="font-body text-gray-600 text-lg leading-relaxed font-bold">Because the door knows your name. No line. No "are you on the list" energy. Walk in, drink in hand, kick back.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-body font-black text-brand-dark uppercase tracking-widest text-xl mb-3">Does my free offer only apply to the date I sign up for?</h3>
+                    <p class="font-body text-gray-600 text-lg leading-relaxed font-bold">Yes.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-body font-black text-brand-dark uppercase tracking-widest text-xl mb-3">What are the directions?</h3>
+                    <a href="https://www.google.com/maps?gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDsyBggCEEUYOzIGCAMQRRg8MgYIBBBFGDwyBggFEEUYPDIGCAYQRRg8MgYIBxBFGEHSAQgyOTY3ajBqNKgCALACAQ&um=1&ie=UTF-8&fb=1&gl=us&sa=X&geocode=KR8aKexHWcKJMd4mwQsHDEQv&daddr=958+6th+Ave,+New+York,+NY+10001" target="_blank" class="inline-flex items-center gap-2 font-body text-brand-blue text-lg font-black tracking-widest uppercase hover:text-brand-dark transition-colors">
+                        Get Directions
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: THE FORM -->
+            <div class="order-1 lg:order-2">
+                <div id="form-container" class="bg-white border border-gray-200 p-8 md:p-12 shadow-2xl relative rounded-xl">
+                    
+                    <div class="text-center mb-10">
+                        <h2 class="font-display text-6xl md:text-7xl uppercase tracking-wide mb-3 text-brand-dark">
+                            LOCK YOUR SPOT.
+                        </h2>
+                        <p class="font-body font-bold text-gray-500 text-lg">Spots disappear in real time. Do not think. Just RSVP.</p>
+                    </div>
+
+                    <!-- Form posts to placeholder backend endpoint -->
+                    <form id="rsvp-form" onsubmit="handleFormSubmit(event)" class="flex flex-col gap-6">
+                        
+                        <div class="flex flex-col gap-2">
+                            <label class="font-body font-black text-sm uppercase text-brand-dark tracking-widest">First Name</label>
+                            <input type="text" required class="bg-gray-50 border-2 border-gray-200 px-4 py-4 font-body text-brand-dark focus:outline-none focus:border-brand-blue focus:bg-white transition-colors text-lg rounded-md" placeholder="Your Name">
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <label class="font-body font-black text-sm uppercase text-brand-dark tracking-widest">Email (We send the QR here)</label>
+                            <input type="email" required class="bg-gray-50 border-2 border-gray-200 px-4 py-4 font-body text-brand-dark focus:outline-none focus:border-brand-blue focus:bg-white transition-colors text-lg rounded-md" placeholder="you@email.com">
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <label class="font-body font-black text-sm uppercase text-brand-dark tracking-widest">Date Attending</label>
+                            <select id="date-select" required class="bg-gray-50 border-2 border-gray-200 px-4 py-4 font-body text-brand-dark focus:outline-none focus:border-brand-blue focus:bg-white transition-colors text-lg appearance-none rounded-md font-bold">
+                                <option value="fri-june-6">Friday June 6</option>
+                                <option value="sat-june-7">Saturday June 7</option>
+                                <option value="sun-june-8">Sunday June 8</option>
+                                <option value="future">Future Weekends</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-center gap-3 mt-4 border-t border-gray-100 pt-6">
+                            <input type="checkbox" id="creator" class="w-6 h-6 border-2 border-gray-300 text-brand-blue focus:ring-brand-blue rounded-sm cursor-pointer">
+                            <label for="creator" class="font-body text-brand-dark font-bold cursor-pointer">I am a content creator (VIP perks)</label>
+                        </div>
+
+                        <div class="flex items-start gap-3 mt-2 mb-6">
+                            <input type="checkbox" required id="consent" class="w-6 h-6 mt-0.5 border-2 border-gray-300 text-brand-blue focus:ring-brand-blue rounded-sm cursor-pointer">
+                            <label for="consent" class="font-body text-gray-500 text-sm font-semibold leading-snug cursor-pointer">I agree to receive email marketing. Opt out anytime.</label>
+                        </div>
+
+                        <button type="submit" class="w-full bg-brand-blue hover:bg-brand-darker text-white font-display text-4xl px-8 py-6 uppercase tracking-widest transition-all duration-300 shadow-xl rounded-md">
+                            SEND MY FREE DRINK QR
+                        </button>
+                        
+                        <p class="text-center font-body font-bold text-gray-400 text-sm mt-2">We email you in 30 seconds. Show the QR at the door. That is it.</p>
+                    </form>
+
+                    <div class="flex flex-wrap justify-center gap-4 md:gap-8 mt-10 pt-8 border-t border-gray-100 font-body font-black text-brand-dark text-sm md:text-base uppercase tracking-widest">
+                        <span class="flex items-center gap-2"><svg class="w-5 h-5 text-brand-blue" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> 100% Free</span>
+                        <span class="flex items-center gap-2"><svg class="w-5 h-5 text-brand-blue" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> 21+ Only</span>
+                        <span class="flex items-center gap-2"><svg class="w-5 h-5 text-brand-blue" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> Cookies Family</span>
+                    </div>
+                </div>
+
+                <!-- Thank you state (Hidden by default) -->
+                <div id="thank-you-state" class="hidden bg-brand-blue p-8 md:p-16 shadow-2xl text-center rounded-xl">
+                    <h2 class="font-display text-6xl md:text-8xl uppercase tracking-wide mb-6 text-white drop-shadow-lg">
+                        YOU ARE IN.
+                    </h2>
+                    <div class="space-y-4">
+                        <p class="font-body text-2xl text-white font-black bg-brand-dark/20 inline-block px-6 py-2 rounded-full">Check your email for the QR.</p>
+                        <p class="font-body text-xl text-white font-bold">See you Friday.</p>
+                        <p class="font-body text-xl text-white font-bold">Bring a friend.</p>
+                        <p class="font-body text-xl text-white font-bold mt-8 border-t border-white/20 pt-8">Pull up early. First come first served on the drink.</p>
+                    </div>
+                </div>
+            </div> <!-- End Form Column -->
+        </div> <!-- End Grid -->
+    </section>
+
+    <!-- 8. FINAL CTA BLOCK -->
+    <section class="py-12 px-4 bg-gray-100 bg-linen text-center border-t-8 border-brand-dark">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-body font-black text-4xl md:text-6xl uppercase tracking-tight mb-6 text-brand-dark leading-tight">
+                DO NOT BE THE PERSON WHO READ THIS AND DID NOT RSVP.
+            </h2>
+            
+            <div class="flex items-center justify-center gap-4 mb-8">
+                <svg class="w-10 h-10 md:w-14 md:h-14 text-brand-blue animate-bounce-x drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                <p class="font-display text-5xl md:text-7xl text-brand-dark tracking-widest drop-shadow-sm m-0">
+                    <span class="spot-counter text-brand-blue">47</span> OF 50 SPOTS LEFT.
+                </p>
+            </div>
+
+            <button onclick="scrollToForm()" class="w-full md:w-auto px-16 py-6 bg-brand-dark hover:bg-black text-white font-display text-4xl md:text-5xl uppercase tracking-widest transition-all duration-300 shadow-xl rounded-sm">
+                LOCK MY FREE DRINK NOW
+            </button>
+        </div>
+    </section>
+
+    <!-- 9. FOOTER -->
+    <footer class="py-10 text-center bg-brand-dark border-t-4 border-brand-blue">
+        <div class="flex flex-col items-center justify-center gap-2 mb-6 text-white">
+            <span class="font-body font-black text-2xl md:text-3xl tracking-widest uppercase">CULTURE HOUSE</span>
+            <span class="font-body font-bold text-brand-cyan text-sm tracking-[0.2em] uppercase mt-2">THINGS TO DO IN NYC AFTER WORK</span>
+        </div>
+        <p class="font-body text-gray-400 text-sm font-bold uppercase tracking-widest mb-1">Culture House, 958 6th Ave, New York, NY 10001</p>
+        <p class="font-body text-gray-500 text-xs font-bold uppercase tracking-widest mb-3">Located in Herald Square Park | <a href="tel:2127048080" class="hover:text-brand-blue transition-colors">(212) 704-8080</a></p>
+        <p class="font-body text-gray-600 text-xs font-bold uppercase tracking-widest mt-6">21+ Only . Please drink responsibly .</p>
+    </footer>
+
+    <!-- LAYER 4: SOCIAL PROOF TICKER (Sticky Bottom Left) -->
+    <div id="social-ticker" class="fixed bottom-24 md:bottom-8 left-4 bg-white border-l-4 border-brand-blue p-4 rounded shadow-2xl z-40 flex items-center gap-3 transition-opacity duration-500 opacity-0 transform translate-y-4">
+        <div class="w-3 h-3 rounded-full bg-brand-blue animate-pulse"></div>
+        <p id="ticker-text" class="font-body text-sm font-black text-brand-dark m-0 tracking-wide uppercase"></p>
+    </div>
+
+    <!-- MOBILE STICKY CTA -->
+    <div class="fixed bottom-0 left-0 w-full p-4 bg-white border-t-2 border-gray-200 z-50 md:hidden flex justify-center shadow-[0_-10px_30px_rgba(0,0,0,0.1)]">
+        <button onclick="scrollToForm()" class="w-full py-4 bg-brand-blue text-white font-display text-3xl uppercase tracking-widest active:bg-brand-darker rounded-sm">
+            RSVP . FREE DRINK
+        </button>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // 1. SCROLL TO FORM
+        function scrollToForm() {
+            const form = document.getElementById('rsvp-section');
+            form.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 2. SELECT DATE AND SCROLL
+        function selectDateAndScroll(dateValue) {
+            const select = document.getElementById('date-select');
+            select.value = dateValue;
+            scrollToForm();
+        }
+
+        // 3. LAYER 2: LIVE SPOT COUNTER LOGIC
+        // Must persist across reloads via localStorage, never goes up.
+        function initSpotCounter() {
+            let spots = localStorage.getItem('ch_spots_left');
+            
+            // Start at 47 if brand new visitor
+            if (spots === null) {
+                spots = 47;
+                localStorage.setItem('ch_spots_left', spots);
+            } else {
+                spots = parseInt(spots);
+            }
+
+            updateSpotDisplays(spots);
+            scheduleNextSpotDrop(spots);
+        }
+
+        function updateSpotDisplays(count) {
+            const counters = document.querySelectorAll('.spot-counter');
+            counters.forEach(el => {
+                el.innerText = count;
+                
+                // Color change logic at 12
+                if (count <= 12) {
+                    el.classList.remove('text-brand-cyan', 'text-white');
+                    el.classList.add('!text-brand-red', 'animate-pulse');
+                }
+            });
+
+            // Almost gone text logic at 3
+            if (count <= 3) {
+                const almostGone = document.querySelectorAll('.almost-gone-text');
+                almostGone.forEach(el => {
+                    el.classList.remove('hidden');
+                    el.classList.add('inline-block', 'text-brand-red', 'animate-pulse');
+                });
+            }
+        }
+
+        function scheduleNextSpotDrop(currentSpots) {
+            if (currentSpots <= 1) return; // Stop at 1 for max scarcity without hitting 0 right away
+
+            // Random time between 8 and 14 minutes (in milliseconds)
+            const minMs = 8 * 60 * 1000;
+            const maxMs = 14 * 60 * 1000;
+            const timeToNextDrop = Math.floor(Math.random() * (maxMs - minMs + 1) + minMs);
+
+            setTimeout(() => {
+                let spots = parseInt(localStorage.getItem('ch_spots_left')) || currentSpots;
+                if (spots > 1) {
+                    spots--;
+                    localStorage.setItem('ch_spots_left', spots);
+                    updateSpotDisplays(spots);
+                    scheduleNextSpotDrop(spots);
+                }
+            }, timeToNextDrop);
+        }
+
+        // 4. LAYER 3: TIME SCARCITY (COUNTDOWN TIMER)
+        function initCountdown() {
+            // Set a target date roughly 2 days and 14 hours from page load to match design
+            // Using localStorage to keep the countdown consistent for the user
+            let targetTime = localStorage.getItem('ch_target_time');
+            
+            if (!targetTime) {
+                const now = new Date().getTime();
+                // 2 Days, 14 Hrs, 33 Mins, 12 Secs in milliseconds
+                const offset = (2 * 24 * 60 * 60 * 1000) + (14 * 60 * 60 * 1000) + (33 * 60 * 1000) + (12 * 1000);
+                targetTime = now + offset;
+                localStorage.setItem('ch_target_time', targetTime);
+            } else {
+                targetTime = parseInt(targetTime);
+            }
+
+            const timerElement = document.getElementById('countdown-timer');
+
+            const interval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = targetTime - now;
+
+                if (distance < 0) {
+                    clearInterval(interval);
+                    timerElement.innerHTML = "DOORS ARE OPEN";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Format with leading zeros
+                const d = days < 10 ? "0" + days : days;
+                const h = hours < 10 ? "0" + hours : hours;
+                const m = minutes < 10 ? "0" + minutes : minutes;
+                const s = seconds < 10 ? "0" + seconds : seconds;
+
+                timerElement.innerHTML = `${d}D : ${h}H : ${m}M : ${s}S`;
+            }, 1000);
+        }
+
+        // 5. LAYER 4: SOCIAL PROOF TICKER
+        const names = ["Maya from Brooklyn", "James", "Tasha", "Marcus from Harlem", "Sarah", "Devin from Queens", "Chloe", "Andre", "Lexi", "David from LIC"];
+        const actions = ["just RSVP'd", "locked in for Saturday", "grabbed a spot for Sunday", "claimed a free drink", "is pulling up Friday"];
+
+        function initTicker() {
+            const ticker = document.getElementById('social-ticker');
+            const tickerText = document.getElementById('ticker-text');
+            
+            function showNextAlert() {
+                const randomName = names[Math.floor(Math.random() * names.length)];
+                const randomAction = actions[Math.floor(Math.random() * actions.length)];
+                
+                tickerText.innerText = `${randomName} ${randomAction}`;
+                
+                // Fade in
+                ticker.classList.remove('opacity-0', 'translate-y-4');
+                ticker.classList.add('opacity-100', 'translate-y-0');
+
+                // Fade out after 4 seconds
+                setTimeout(() => {
+                    ticker.classList.remove('opacity-100', 'translate-y-0');
+                    ticker.classList.add('opacity-0', 'translate-y-4');
+                }, 4000);
+            }
+
+            // Initial delay before first popup
+            setTimeout(() => {
+                showNextAlert();
+                // Rotate every 6 seconds
+                setInterval(showNextAlert, 6000);
+            }, 2000);
+        }
+
+        // 6. FORM SUBMISSION HANDLING
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            // In a real build, you wire fetch() here to post data to backend
+            
+            const formContainer = document.getElementById('form-container');
+            const thankYouState = document.getElementById('thank-you-state');
+            
+            formContainer.classList.add('hidden');
+            thankYouState.classList.remove('hidden');
+
+            // Force a spot decrement on submission just to up the urgency for returning visitors
+            let spots = parseInt(localStorage.getItem('ch_spots_left')) || 47;
+            if (spots > 1) {
+                spots--;
+                localStorage.setItem('ch_spots_left', spots);
+                updateSpotDisplays(spots);
+            }
+        }
+
+        // INIT ALL
+        document.addEventListener('DOMContentLoaded', () => {
+            initSpotCounter();
+            initCountdown();
+            initTicker();
+        });
+    </script>
+</body>
+</html>
