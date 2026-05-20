@@ -21,7 +21,7 @@
                             dark: '#0A1118', /* Deep navy/slate matching the flyer night sky */
                             darker: '#05080C',
                             card: '#131C2A', 
-                            blue: '#0044FF', /* Electric blue from flyer */
+                            blue: '#1A47E5', /* Cobalt blue matching flyer */
                             cyan: '#00AEEF', /* Cyan from website footer */
                             yellow: '#FFEA00', /* Electric yellow for event times */
                             white: '#FFFFFF',
@@ -73,7 +73,7 @@
             left: -5%;
             width: 110%;
             height: 80%;
-            background-color: #0044FF;
+            background-color: #1A47E5;
             z-index: -1;
             transform: rotate(-2deg);
             border-radius: 2px;
@@ -157,7 +157,7 @@
                 <span class="almost-gone-text hidden ml-2 text-brand-red animate-pulse">ALMOST GONE</span>
             </div>
 
-            <button onclick="scrollToForm()" class="w-full md:w-auto max-w-md bg-brand-blue hover:bg-white hover:text-brand-blue text-white font-display text-4xl md:text-5xl px-12 py-5 uppercase tracking-wider transition-all duration-300 transform hover:scale-105 shadow-[0_0_30px_rgba(0,68,255,0.6)] rounded-sm">
+            <button onclick="scrollToForm()" class="w-full md:w-auto max-w-md bg-brand-blue hover:bg-white hover:text-brand-blue text-white font-display text-4xl md:text-5xl px-12 py-5 uppercase tracking-wider transition-all duration-300 transform hover:scale-105 shadow-[0_0_30px_rgba(26,71,229,0.6)] rounded-sm">
                 CLAIM MY FREE DRINK NOW
             </button>
             <p class="mt-4 font-body text-gray-400 text-xs md:text-sm tracking-widest uppercase font-bold">
@@ -170,7 +170,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-y-12 w-full items-end">
                 <!-- Icon 1 -->
                 <div class="flex flex-col items-center text-center border-r-2 border-brand-blue px-2">
-                    <svg class="w-12 h-12 md:w-16 md:h-16 text-white mb-4 drop-shadow-[0_0_10px_rgba(0,68,255,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+                    <svg class="w-12 h-12 md:w-16 md:h-16 text-white mb-4 drop-shadow-[0_0_10px_rgba(26,71,229,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
                     <h3 class="font-display text-2xl md:text-4xl uppercase tracking-widest text-white leading-none">Great Music</h3>
                 </div>
                 
@@ -289,17 +289,18 @@
         </div>
     </section>
 
-    <!-- BRAND SEPARATOR -->
-    <div class="flex items-center justify-center gap-4 my-10 max-w-3xl mx-auto px-4">
-        <span class="flex-grow h-[2px] bg-gradient-to-r from-transparent via-brand-dark/40 to-brand-dark rounded-full"></span>
-        <span class="flex items-center justify-center w-11 h-11 rounded-full bg-brand-dark text-white shadow-lg ring-4 ring-brand-dark/10">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-        </span>
-        <span class="flex-grow h-[2px] bg-gradient-to-l from-transparent via-brand-dark/40 to-brand-dark rounded-full"></span>
-    </div>
-
     <!-- 4. THE FORM (Clean White/Gray Premium Card) -->
-    <section id="rsvp-section" class="pt-2 pb-8 px-4 max-w-6xl mx-auto scroll-mt-24 mb-10">
+    <section id="rsvp-section" class="bg-white scroll-mt-24 pt-10 pb-12 md:pt-12 md:pb-16 mb-10">
+      <!-- BRAND SEPARATOR -->
+      <div class="flex items-center justify-center gap-4 mb-10 md:mb-14 max-w-3xl mx-auto px-4">
+          <span class="flex-grow h-[2px] bg-gradient-to-r from-transparent via-brand-dark/40 to-brand-dark rounded-full"></span>
+          <span class="flex items-center justify-center w-11 h-11 rounded-full bg-brand-dark text-white shadow-lg ring-4 ring-brand-dark/10">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+          </span>
+          <span class="flex-grow h-[2px] bg-gradient-to-l from-transparent via-brand-dark/40 to-brand-dark rounded-full"></span>
+      </div>
+
+      <div class="px-4 max-w-6xl mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             
             <!-- LEFT COLUMN: Q&A -->
@@ -428,6 +429,7 @@
                 </div>
             </div> <!-- End Form Column -->
         </div> <!-- End Grid -->
+      </div>
     </section>
 
     <!-- 8. DROP ALERTS SIGNUP -->
