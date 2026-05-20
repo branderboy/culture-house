@@ -587,6 +587,12 @@
         </div>
     </footer>
 
+    <!-- LAYER 4: SOCIAL PROOF TICKER (Sticky Bottom Left) -->
+    <div id="social-ticker" class="fixed bottom-24 md:bottom-8 left-4 bg-white border-l-4 border-brand-blue p-4 rounded shadow-2xl z-40 flex items-center gap-3 transition-opacity duration-500 opacity-0 transform translate-y-4">
+        <div class="w-3 h-3 rounded-full bg-brand-blue animate-pulse"></div>
+        <p id="ticker-text" class="font-body text-sm font-black text-brand-dark m-0 tracking-wide uppercase"></p>
+    </div>
+
     <!-- MOBILE STICKY CTA -->
     <div class="fixed bottom-0 left-0 w-full p-4 bg-white border-t-2 border-gray-200 z-50 md:hidden flex justify-center shadow-[0_-10px_30px_rgba(0,0,0,0.1)]">
         <button onclick="scrollToForm()" class="w-full py-4 bg-brand-blue text-white font-display text-3xl uppercase tracking-widest active:bg-brand-darker rounded-sm">
@@ -752,6 +758,33 @@
             }
         }
 
+        // 5b. SOCIAL PROOF TICKER
+        const tickerNames = ["Maya from Brooklyn", "James", "Tasha", "Marcus from Harlem", "Sarah", "Devin from Queens", "Chloe", "Andre", "Lexi", "David from Midtown"];
+        const tickerActions = ["just RSVP'd", "locked in for Saturday", "grabbed a spot for Sunday", "claimed a free drink", "is pulling up Friday"];
+
+        function initTicker() {
+            const ticker = document.getElementById('social-ticker');
+            const tickerText = document.getElementById('ticker-text');
+            if (!ticker || !tickerText) return;
+
+            function showNextAlert() {
+                const name = tickerNames[Math.floor(Math.random() * tickerNames.length)];
+                const action = tickerActions[Math.floor(Math.random() * tickerActions.length)];
+                tickerText.innerText = `${name} ${action}`;
+                ticker.classList.remove('opacity-0', 'translate-y-4');
+                ticker.classList.add('opacity-100', 'translate-y-0');
+                setTimeout(() => {
+                    ticker.classList.remove('opacity-100', 'translate-y-0');
+                    ticker.classList.add('opacity-0', 'translate-y-4');
+                }, 4000);
+            }
+
+            setTimeout(() => {
+                showNextAlert();
+                setInterval(showNextAlert, 6000);
+            }, 2000);
+        }
+
         // 6. CALENDAR + SHARE
         const eventDetails = {
             'fri-june-6': { title: 'Happy Hour @ Culture House', start: '20260606T210000Z', end: '20260607T000000Z', label: 'Friday June 6, 5PM–8PM' },
@@ -838,6 +871,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             initSpotCounter();
             initCountdown();
+            initTicker();
         });
     </script>
 </body>
