@@ -638,7 +638,11 @@
             } else if (lastDay && lastDay !== today && today < EVENT_START_DATE) {
                 const elapsed = daysBetween(lastDay, today);
                 if (elapsed > 0) {
-                    spots = Math.max(SPOTS_FLOOR, spots - elapsed);
+                    let drop = 0;
+                    for (let i = 0; i < elapsed; i++) {
+                        drop += 3 + Math.floor(Math.random() * 2); // 3 or 4 per day
+                    }
+                    spots = Math.max(SPOTS_FLOOR, spots - drop);
                     localStorage.setItem('ch_spots_left', spots);
                     localStorage.setItem('ch_spots_last_day', today);
                 }
@@ -752,22 +756,52 @@
         }
 
         // 5b. SOCIAL PROOF TICKER
-        const tickerNames = ["Maya from Brooklyn", "James", "Tasha", "Marcus from Harlem", "Sarah", "Devin from Queens", "Chloe", "Andre", "Lexi", "David from Midtown"];
-        const tickerActions = ["just RSVP'd", "locked in for Saturday", "grabbed a spot for Sunday", "claimed a free drink", "is pulling up Friday"];
+        const tickerNames = [
+            "Maya from Brooklyn", "James from the UWS", "Tasha", "Marcus from Harlem",
+            "Sarah from Hoboken", "Devin from Queens", "Chloe", "Andre from Bed-Stuy",
+            "Lexi", "David from Midtown", "Priya from Astoria", "Jordan from Jersey City",
+            "Naomi", "Trey from the Bronx", "Imani from Crown Heights", "Kai from FiDi",
+            "Renee from Williamsburg"
+        ];
+        const tickerActions = [
+            "just RSVP'd for Happy Hour",
+            "locked in for Saturday",
+            "grabbed a spot for Sunday",
+            "claimed a free welcome drink",
+            "is pulling up Friday",
+            "joined the Drop Alerts list",
+            "RSVP'd for Karaoke Night",
+            "signed up for Content Creator Night",
+            "saved a seat for Trivia Tuesday",
+            "got on the list for the next Happy Hour",
+            "is bringing a friend to Sunday's session",
+            "added Friday June 6 to their calendar",
+            "joined the VIP creator list",
+            "RSVP'd for the next Culture House drop"
+        ];
 
         function initTicker() {
             const ticker = document.getElementById('social-ticker');
             const tickerText = document.getElementById('ticker-text');
             if (!ticker || !tickerText) return;
 
-            const total = 2 + Math.floor(Math.random() * 2); // 2 or 3 per visit
+            const total = 4 + Math.floor(Math.random() * 3); // 4–6 per visit
             let shown = 0;
+            let lastName = '', lastAction = '';
+
+            function pickDistinct(arr, last) {
+                let pick = arr[Math.floor(Math.random() * arr.length)];
+                if (arr.length > 1 && pick === last) {
+                    pick = arr[(arr.indexOf(pick) + 1) % arr.length];
+                }
+                return pick;
+            }
 
             function showNextAlert() {
                 if (shown >= total) return;
-                const name = tickerNames[Math.floor(Math.random() * tickerNames.length)];
-                const action = tickerActions[Math.floor(Math.random() * tickerActions.length)];
-                tickerText.innerText = `${name} ${action}`;
+                lastName = pickDistinct(tickerNames, lastName);
+                lastAction = pickDistinct(tickerActions, lastAction);
+                tickerText.innerText = `${lastName} ${lastAction}`;
                 ticker.classList.remove('opacity-0', 'translate-y-4');
                 ticker.classList.add('opacity-100', 'translate-y-0');
                 setTimeout(() => {
@@ -776,13 +810,13 @@
                 }, 4500);
                 shown++;
                 if (shown < total) {
-                    const gap = 30000 + Math.random() * 30000; // 30–60s between alerts
+                    const gap = 25000 + Math.random() * 20000; // 25–45s between alerts
                     setTimeout(showNextAlert, gap);
                 }
             }
 
-            // First alert 15–25 seconds after page load
-            setTimeout(showNextAlert, 15000 + Math.random() * 10000);
+            // First alert 12–20 seconds after page load
+            setTimeout(showNextAlert, 12000 + Math.random() * 8000);
         }
 
         // 6. CALENDAR + SHARE
