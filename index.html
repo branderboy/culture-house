@@ -602,6 +602,7 @@
             SPOTS_DROP_MIN: 3,          // Min decrement per elapsed day
             SPOTS_DROP_MAX: 4,          // Max decrement per elapsed day
             EVENT_START_DATE: '2026-06-06', // Counter freezes on/after this day (YYYY-MM-DD)
+            SPOTS_VERSION: 2,           // Bump this number to force every returning visitor's counter back to SPOTS_START
 
             // Countdown timer in the top bar
             COUNTDOWN_DAYS: 2,
@@ -659,14 +660,17 @@
 
         function initSpotCounter() {
             const today = todayKey();
+            const storedVersion = parseInt(localStorage.getItem('ch_spots_version'));
             let spots = parseInt(localStorage.getItem('ch_spots_left'));
             let lastDay = localStorage.getItem('ch_spots_last_day');
 
-            if (isNaN(spots)) {
+            // Reset if version mismatch or no value yet
+            if (isNaN(spots) || storedVersion !== CONFIG.SPOTS_VERSION) {
                 spots = SPOTS_START;
                 lastDay = today;
                 localStorage.setItem('ch_spots_left', spots);
                 localStorage.setItem('ch_spots_last_day', lastDay);
+                localStorage.setItem('ch_spots_version', CONFIG.SPOTS_VERSION);
             } else if (lastDay && lastDay !== today && today < EVENT_START_DATE) {
                 const elapsed = daysBetween(lastDay, today);
                 if (elapsed > 0) {
