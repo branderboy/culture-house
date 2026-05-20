@@ -99,7 +99,7 @@
         <p class="font-body font-black text-brand-darker text-sm md:text-base uppercase m-0 leading-none tracking-widest flex items-center justify-center flex-wrap gap-2">
             <span>DOORS OPEN IN: <span id="countdown-timer" class="font-display tracking-widest text-lg md:text-xl relative top-[2px] ml-1">02D : 14H : 33M : 12S</span></span>
             <span class="hidden md:inline text-brand-darker opacity-50">•</span>
-            <span class="bg-brand-dark text-white px-3 py-1 rounded-sm shadow-sm flex items-center gap-2">ONLY <svg class="w-4 h-4 text-white animate-bounce-x" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg> <span class="spot-counter font-display text-xl relative top-[1px] text-white">47</span> FREE DRINKS LEFT</span>
+            <span class="bg-brand-dark text-white px-3 py-1 rounded-sm shadow-sm flex items-center gap-2"><svg class="w-4 h-4 text-white animate-bounce-x" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg> <span class="spot-counter font-display text-xl relative top-[1px] text-white">47</span> DRINKS REDEMPTIONS LEFT</span>
         </p>
     </div>
 
@@ -591,6 +591,38 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        // ============================================================
+        // CONFIG — edit these values to tune the page. Everything below
+        // this block is wiring and should rarely need to change.
+        // ============================================================
+        const CONFIG = {
+            // Spot counter (the "47 drinks redemptions left" chip)
+            SPOTS_START: 47,            // Starting count for new visitors
+            SPOTS_FLOOR: 5,             // Never auto-drops below this
+            SPOTS_DROP_MIN: 3,          // Min decrement per elapsed day
+            SPOTS_DROP_MAX: 4,          // Max decrement per elapsed day
+            EVENT_START_DATE: '2026-06-06', // Counter freezes on/after this day (YYYY-MM-DD)
+
+            // Countdown timer in the top bar
+            COUNTDOWN_DAYS: 2,
+            COUNTDOWN_HOURS: 14,
+            COUNTDOWN_MINUTES: 33,
+            COUNTDOWN_SECONDS: 12,
+
+            // Social proof popups (bottom-left)
+            TICKER_MIN_PER_VISIT: 4,    // Minimum popups shown in one visit
+            TICKER_MAX_PER_VISIT: 6,    // Maximum popups shown in one visit
+            TICKER_FIRST_DELAY_MIN_MS: 12000,   // First popup appears after this min delay
+            TICKER_FIRST_DELAY_MAX_MS: 20000,   // ...and at most this delay
+            TICKER_GAP_MIN_MS: 25000,           // Min gap between popups
+            TICKER_GAP_MAX_MS: 45000,           // Max gap between popups
+            TICKER_VISIBLE_MS: 4500,            // How long each popup stays on screen
+
+            // Form submission endpoint (Formsubmit.co — no signup, no API key)
+            FORM_ENDPOINT: 'https://formsubmit.co/ajax/kawani@digiwaxx.com'
+        };
+        // ============================================================
+
         // 1. SCROLL TO FORM
         function scrollToForm() {
             const form = document.getElementById('rsvp-section');
@@ -605,35 +637,63 @@
         }
 
         // 3. LAYER 2: LIVE SPOT COUNTER LOGIC
-        // Must persist across reloads via localStorage, never goes up.
+        // Drops daily up until the event start. Persists across reloads via
+        // localStorage and only ever goes down.
+        const SPOTS_START = CONFIG.SPOTS_START;
+        const SPOTS_FLOOR = CONFIG.SPOTS_FLOOR;
+        const EVENT_START_DATE = CONFIG.EVENT_START_DATE;
+
+        function todayKey() {
+            const d = new Date();
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
+        function daysBetween(fromKey, toKey) {
+            const a = new Date(fromKey + 'T00:00:00');
+            const b = new Date(toKey + 'T00:00:00');
+            return Math.max(0, Math.round((b - a) / 86400000));
+        }
+
         function initSpotCounter() {
-            let spots = localStorage.getItem('ch_spots_left');
-            
-            // Start at 47 if brand new visitor
-            if (spots === null) {
-                spots = 47;
+            const today = todayKey();
+            let spots = parseInt(localStorage.getItem('ch_spots_left'));
+            let lastDay = localStorage.getItem('ch_spots_last_day');
+
+            if (isNaN(spots)) {
+                spots = SPOTS_START;
+                lastDay = today;
                 localStorage.setItem('ch_spots_left', spots);
-            } else {
-                spots = parseInt(spots);
+                localStorage.setItem('ch_spots_last_day', lastDay);
+            } else if (lastDay && lastDay !== today && today < EVENT_START_DATE) {
+                const elapsed = daysBetween(lastDay, today);
+                if (elapsed > 0) {
+                    let drop = 0;
+                    const range = CONFIG.SPOTS_DROP_MAX - CONFIG.SPOTS_DROP_MIN + 1;
+                    for (let i = 0; i < elapsed; i++) {
+                        drop += CONFIG.SPOTS_DROP_MIN + Math.floor(Math.random() * range);
+                    }
+                    spots = Math.max(SPOTS_FLOOR, spots - drop);
+                    localStorage.setItem('ch_spots_left', spots);
+                    localStorage.setItem('ch_spots_last_day', today);
+                }
             }
 
             updateSpotDisplays(spots);
-            scheduleNextSpotDrop(spots);
         }
 
         function updateSpotDisplays(count) {
             const counters = document.querySelectorAll('.spot-counter');
             counters.forEach(el => {
                 el.innerText = count;
-                
-                // Color change logic at 12
                 if (count <= 12) {
                     el.classList.remove('text-brand-cyan', 'text-white');
                     el.classList.add('!text-brand-red', 'animate-pulse');
                 }
             });
 
-            // Almost gone text logic at 3
             if (count <= 3) {
                 const almostGone = document.querySelectorAll('.almost-gone-text');
                 almostGone.forEach(el => {
@@ -641,25 +701,6 @@
                     el.classList.add('inline-block', 'text-brand-red', 'animate-pulse');
                 });
             }
-        }
-
-        function scheduleNextSpotDrop(currentSpots) {
-            if (currentSpots <= 1) return; // Stop at 1 for max scarcity without hitting 0 right away
-
-            // Random time between 8 and 14 minutes (in milliseconds)
-            const minMs = 8 * 60 * 1000;
-            const maxMs = 14 * 60 * 1000;
-            const timeToNextDrop = Math.floor(Math.random() * (maxMs - minMs + 1) + minMs);
-
-            setTimeout(() => {
-                let spots = parseInt(localStorage.getItem('ch_spots_left')) || currentSpots;
-                if (spots > 1) {
-                    spots--;
-                    localStorage.setItem('ch_spots_left', spots);
-                    updateSpotDisplays(spots);
-                    scheduleNextSpotDrop(spots);
-                }
-            }, timeToNextDrop);
         }
 
         // 4. LAYER 3: TIME SCARCITY (COUNTDOWN TIMER)
@@ -670,8 +711,7 @@
             
             if (!targetTime) {
                 const now = new Date().getTime();
-                // 2 Days, 14 Hrs, 33 Mins, 12 Secs in milliseconds
-                const offset = (2 * 24 * 60 * 60 * 1000) + (14 * 60 * 60 * 1000) + (33 * 60 * 1000) + (12 * 1000);
+                const offset = (CONFIG.COUNTDOWN_DAYS * 24 * 60 * 60 * 1000) + (CONFIG.COUNTDOWN_HOURS * 60 * 60 * 1000) + (CONFIG.COUNTDOWN_MINUTES * 60 * 1000) + (CONFIG.COUNTDOWN_SECONDS * 1000);
                 targetTime = now + offset;
                 localStorage.setItem('ch_target_time', targetTime);
             } else {
@@ -706,11 +746,11 @@
         }
 
         // 5. FORM SUBMISSION HANDLING
-        // Formsubmit.co AJAX endpoint — no API key, no signup. First submission
-        // triggers a one-time activation email to the address below; click the
-        // confirmation link there once and every future submission lands in
-        // that inbox.
-        const FORM_ENDPOINT = 'https://formsubmit.co/ajax/kawani@digiwaxx.com';
+        // Formsubmit.co AJAX endpoint (set in CONFIG above). No API key, no
+        // signup. First submission triggers a one-time activation email to
+        // the address in CONFIG.FORM_ENDPOINT; click the confirmation link
+        // and every future submission lands in that inbox.
+        const FORM_ENDPOINT = CONFIG.FORM_ENDPOINT;
 
         async function handleFormSubmit(event) {
             event.preventDefault();
@@ -748,30 +788,68 @@
         }
 
         // 5b. SOCIAL PROOF TICKER
-        const tickerNames = ["Maya from Brooklyn", "James", "Tasha", "Marcus from Harlem", "Sarah", "Devin from Queens", "Chloe", "Andre", "Lexi", "David from Midtown"];
-        const tickerActions = ["just RSVP'd", "locked in for Saturday", "grabbed a spot for Sunday", "claimed a free drink", "is pulling up Friday"];
+        const tickerNames = [
+            "Maya from Brooklyn", "James from the UWS", "Tasha", "Marcus from Harlem",
+            "Sarah from Hoboken", "Devin from Queens", "Chloe", "Andre from Bed-Stuy",
+            "Lexi", "David from Midtown", "Priya from Astoria", "Jordan from Jersey City",
+            "Naomi", "Trey from the Bronx", "Imani from Crown Heights", "Kai from FiDi",
+            "Renee from Williamsburg"
+        ];
+        const tickerActions = [
+            "just RSVP'd for Happy Hour",
+            "locked in for Saturday",
+            "grabbed a spot for Sunday",
+            "claimed a free welcome drink",
+            "is pulling up Friday",
+            "joined the Drop Alerts list",
+            "RSVP'd for Karaoke Night",
+            "signed up for Content Creator Night",
+            "saved a seat for Trivia Tuesday",
+            "got on the list for the next Happy Hour",
+            "is bringing a friend to Sunday's session",
+            "added Friday June 6 to their calendar",
+            "joined the VIP creator list",
+            "RSVP'd for the next Culture House drop"
+        ];
 
         function initTicker() {
             const ticker = document.getElementById('social-ticker');
             const tickerText = document.getElementById('ticker-text');
             if (!ticker || !tickerText) return;
 
+            const span = CONFIG.TICKER_MAX_PER_VISIT - CONFIG.TICKER_MIN_PER_VISIT + 1;
+            const total = CONFIG.TICKER_MIN_PER_VISIT + Math.floor(Math.random() * span);
+            let shown = 0;
+            let lastName = '', lastAction = '';
+
+            function pickDistinct(arr, last) {
+                let pick = arr[Math.floor(Math.random() * arr.length)];
+                if (arr.length > 1 && pick === last) {
+                    pick = arr[(arr.indexOf(pick) + 1) % arr.length];
+                }
+                return pick;
+            }
+
             function showNextAlert() {
-                const name = tickerNames[Math.floor(Math.random() * tickerNames.length)];
-                const action = tickerActions[Math.floor(Math.random() * tickerActions.length)];
-                tickerText.innerText = `${name} ${action}`;
+                if (shown >= total) return;
+                lastName = pickDistinct(tickerNames, lastName);
+                lastAction = pickDistinct(tickerActions, lastAction);
+                tickerText.innerText = `${lastName} ${lastAction}`;
                 ticker.classList.remove('opacity-0', 'translate-y-4');
                 ticker.classList.add('opacity-100', 'translate-y-0');
                 setTimeout(() => {
                     ticker.classList.remove('opacity-100', 'translate-y-0');
                     ticker.classList.add('opacity-0', 'translate-y-4');
-                }, 4000);
+                }, CONFIG.TICKER_VISIBLE_MS);
+                shown++;
+                if (shown < total) {
+                    const gap = CONFIG.TICKER_GAP_MIN_MS + Math.random() * (CONFIG.TICKER_GAP_MAX_MS - CONFIG.TICKER_GAP_MIN_MS);
+                    setTimeout(showNextAlert, gap);
+                }
             }
 
-            setTimeout(() => {
-                showNextAlert();
-                setInterval(showNextAlert, 6000);
-            }, 2000);
+            const firstDelay = CONFIG.TICKER_FIRST_DELAY_MIN_MS + Math.random() * (CONFIG.TICKER_FIRST_DELAY_MAX_MS - CONFIG.TICKER_FIRST_DELAY_MIN_MS);
+            setTimeout(showNextAlert, firstDelay);
         }
 
         // 6. CALENDAR + SHARE
