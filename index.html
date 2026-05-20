@@ -335,22 +335,26 @@
                         <p class="font-body font-bold text-gray-500 text-lg">Spots disappear in real time. Do not think. Just RSVP.</p>
                     </div>
 
-                    <!-- Form posts to placeholder backend endpoint -->
                     <form id="rsvp-form" onsubmit="handleFormSubmit(event)" class="flex flex-col gap-6">
-                        
+                        <input type="hidden" name="form_type" value="rsvp">
+                        <input type="hidden" name="_subject" value="New RSVP — Culture House Happy Hour">
+                        <input type="hidden" name="_template" value="table">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
                         <div class="flex flex-col gap-2">
-                            <label class="font-body font-black text-sm uppercase text-brand-dark tracking-widest">First Name</label>
-                            <input type="text" required class="bg-gray-50 border-2 border-gray-200 px-4 py-4 font-body text-brand-dark focus:outline-none focus:border-brand-blue focus:bg-white transition-colors text-lg rounded-md" placeholder="Your Name">
+                            <label for="rsvp-name" class="font-body font-black text-sm uppercase text-brand-dark tracking-widest">First Name</label>
+                            <input id="rsvp-name" name="first_name" type="text" required class="bg-gray-50 border-2 border-gray-200 px-4 py-4 font-body text-brand-dark focus:outline-none focus:border-brand-blue focus:bg-white transition-colors text-lg rounded-md" placeholder="Your Name">
                         </div>
 
                         <div class="flex flex-col gap-2">
-                            <label class="font-body font-black text-sm uppercase text-brand-dark tracking-widest">Email (We send the QR here)</label>
-                            <input type="email" required class="bg-gray-50 border-2 border-gray-200 px-4 py-4 font-body text-brand-dark focus:outline-none focus:border-brand-blue focus:bg-white transition-colors text-lg rounded-md" placeholder="you@email.com">
+                            <label for="rsvp-email" class="font-body font-black text-sm uppercase text-brand-dark tracking-widest">Email (We send the QR here)</label>
+                            <input id="rsvp-email" name="email" type="email" required class="bg-gray-50 border-2 border-gray-200 px-4 py-4 font-body text-brand-dark focus:outline-none focus:border-brand-blue focus:bg-white transition-colors text-lg rounded-md" placeholder="you@email.com">
                         </div>
 
                         <div class="flex flex-col gap-2">
-                            <label class="font-body font-black text-sm uppercase text-brand-dark tracking-widest">Date Attending</label>
-                            <select id="date-select" required class="bg-gray-50 border-2 border-gray-200 px-4 py-4 font-body text-brand-dark focus:outline-none focus:border-brand-blue focus:bg-white transition-colors text-lg appearance-none rounded-md font-bold">
+                            <label for="date-select" class="font-body font-black text-sm uppercase text-brand-dark tracking-widest">Date Attending</label>
+                            <select id="date-select" name="date_attending" required class="bg-gray-50 border-2 border-gray-200 px-4 py-4 font-body text-brand-dark focus:outline-none focus:border-brand-blue focus:bg-white transition-colors text-lg appearance-none rounded-md font-bold">
                                 <option value="fri-june-6">Friday June 6</option>
                                 <option value="sat-june-7">Saturday June 7</option>
                                 <option value="sun-june-8">Sunday June 8</option>
@@ -359,19 +363,20 @@
                         </div>
 
                         <div class="flex items-center gap-3 mt-4 border-t border-gray-100 pt-6">
-                            <input type="checkbox" id="creator" class="w-6 h-6 border-2 border-gray-300 text-brand-blue focus:ring-brand-blue rounded-sm cursor-pointer">
+                            <input type="checkbox" id="creator" name="content_creator" value="yes" class="w-6 h-6 border-2 border-gray-300 text-brand-blue focus:ring-brand-blue rounded-sm cursor-pointer">
                             <label for="creator" class="font-body text-brand-dark font-bold cursor-pointer">I am a content creator (VIP perks)</label>
                         </div>
 
                         <div class="flex items-start gap-3 mt-2 mb-6">
-                            <input type="checkbox" required id="consent" class="w-6 h-6 mt-0.5 border-2 border-gray-300 text-brand-blue focus:ring-brand-blue rounded-sm cursor-pointer">
+                            <input type="checkbox" required id="consent" name="marketing_consent" value="yes" class="w-6 h-6 mt-0.5 border-2 border-gray-300 text-brand-blue focus:ring-brand-blue rounded-sm cursor-pointer">
                             <label for="consent" class="font-body text-gray-500 text-sm font-semibold leading-snug cursor-pointer">I agree to receive email marketing. Opt out anytime.</label>
                         </div>
 
-                        <button type="submit" class="w-full bg-brand-blue hover:bg-brand-darker text-white font-display text-4xl px-8 py-6 uppercase tracking-widest transition-all duration-300 shadow-xl rounded-md">
+                        <button id="rsvp-submit" type="submit" class="w-full bg-brand-blue hover:bg-brand-darker text-white font-display text-4xl px-8 py-6 uppercase tracking-widest transition-all duration-300 shadow-xl rounded-md disabled:opacity-60 disabled:cursor-not-allowed">
                             SEND MY FREE DRINK QR
                         </button>
-                        
+
+                        <p id="rsvp-error" class="hidden text-center font-body font-bold text-brand-red text-sm">Something went wrong. Please try again or email us directly.</p>
                         <p class="text-center font-body font-bold text-gray-400 text-sm mt-2">We email you in 30 seconds. Show the QR at the door. That is it.</p>
                     </form>
 
@@ -433,16 +438,24 @@
                 Be the first to know when the next list opens. No spam, just the drop.
             </p>
 
-            <form id="drop-alerts-form" onsubmit="handleDropAlertsSubmit(event)" class="flex flex-col items-center justify-center gap-3 max-w-md mx-auto">
-                <input type="email" required placeholder="you@email.com" class="w-full text-center bg-white border-2 border-gray-300 px-5 py-4 font-body font-bold text-brand-dark focus:outline-none focus:border-brand-blue transition-colors text-lg rounded-md">
-                <button type="submit" class="w-full bg-brand-dark hover:bg-brand-blue text-white font-display text-2xl md:text-3xl px-8 py-4 uppercase tracking-widest transition-all duration-300 shadow-xl rounded-md whitespace-nowrap">
+            <form id="drop-alerts-form" onsubmit="handleDropAlertsSubmit(event)" class="flex flex-col items-center justify-center gap-3 max-w-md mx-auto text-center">
+                <input type="hidden" name="form_type" value="drop_alert">
+                <input type="hidden" name="_subject" value="New Drop Alert Signup — Culture House">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+                <input id="drop-email" name="email" type="email" required placeholder="you@email.com" class="w-full text-center bg-white border-2 border-gray-300 px-5 py-4 font-body font-bold text-brand-dark focus:outline-none focus:border-brand-blue transition-colors text-lg rounded-md">
+                <button id="drop-submit" type="submit" class="w-full bg-brand-dark hover:bg-brand-blue text-white font-display text-2xl md:text-3xl px-8 py-4 uppercase tracking-widest transition-all duration-300 shadow-xl rounded-md whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed">
                     Notify Me
                 </button>
+                <p id="drop-error" class="hidden font-body font-bold text-brand-red text-sm">Something went wrong. Please try again.</p>
             </form>
 
-            <div id="drop-alerts-thanks" class="hidden mt-6 inline-flex items-center gap-2 bg-brand-blue text-white px-6 py-3 rounded-full font-body font-black uppercase tracking-widest text-sm shadow-lg">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                You're on the list. Watch your inbox.
+            <div class="text-center">
+                <div id="drop-alerts-thanks" class="hidden mt-6 inline-flex items-center gap-2 bg-brand-blue text-white px-6 py-3 rounded-full font-body font-black uppercase tracking-widest text-sm shadow-lg">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                    You're on the list. Watch your inbox.
+                </div>
             </div>
 
             <p class="font-body text-gray-500 text-xs font-bold uppercase tracking-widest mt-6">Unsubscribe anytime . We never share your email</p>
@@ -676,22 +689,44 @@
         }
 
         // 5. FORM SUBMISSION HANDLING
-        function handleFormSubmit(event) {
-            event.preventDefault();
-            // In a real build, you wire fetch() here to post data to backend
-            
-            const formContainer = document.getElementById('form-container');
-            const thankYouState = document.getElementById('thank-you-state');
-            
-            formContainer.classList.add('hidden');
-            thankYouState.classList.remove('hidden');
+        // Formsubmit.co AJAX endpoint — no API key, no signup. First submission
+        // triggers a one-time activation email to the address below; click the
+        // confirmation link there once and every future submission lands in
+        // that inbox.
+        const FORM_ENDPOINT = 'https://formsubmit.co/ajax/kawani@digiwaxx.com';
 
-            // Force a spot decrement on submission just to up the urgency for returning visitors
-            let spots = parseInt(localStorage.getItem('ch_spots_left')) || 47;
-            if (spots > 1) {
-                spots--;
-                localStorage.setItem('ch_spots_left', spots);
-                updateSpotDisplays(spots);
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const btn = document.getElementById('rsvp-submit');
+            const err = document.getElementById('rsvp-error');
+            err.classList.add('hidden');
+            const originalLabel = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = 'SENDING...';
+
+            try {
+                const data = Object.fromEntries(new FormData(form).entries());
+                const res = await fetch(FORM_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!res.ok) throw new Error('Bad response');
+
+                document.getElementById('form-container').classList.add('hidden');
+                document.getElementById('thank-you-state').classList.remove('hidden');
+
+                let spots = parseInt(localStorage.getItem('ch_spots_left')) || 47;
+                if (spots > 1) {
+                    spots--;
+                    localStorage.setItem('ch_spots_left', spots);
+                    updateSpotDisplays(spots);
+                }
+            } catch (e) {
+                btn.disabled = false;
+                btn.innerText = originalLabel;
+                err.classList.remove('hidden');
             }
         }
 
@@ -751,12 +786,30 @@
         function shareEventSelected() { shareEvent(getSelectedDateKey()); }
 
         // 7. DROP ALERTS SIGNUP
-        function handleDropAlertsSubmit(event) {
+        async function handleDropAlertsSubmit(event) {
             event.preventDefault();
             const form = document.getElementById('drop-alerts-form');
             const thanks = document.getElementById('drop-alerts-thanks');
-            form.classList.add('hidden');
-            thanks.classList.remove('hidden');
+            const btn = document.getElementById('drop-submit');
+            const err = document.getElementById('drop-error');
+            err.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerText = 'Sending...';
+            try {
+                const data = Object.fromEntries(new FormData(form).entries());
+                const res = await fetch(FORM_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!res.ok) throw new Error('Bad response');
+                form.classList.add('hidden');
+                thanks.classList.remove('hidden');
+            } catch (e) {
+                btn.disabled = false;
+                btn.innerText = 'Notify Me';
+                err.classList.remove('hidden');
+            }
         }
 
         // INIT ALL
