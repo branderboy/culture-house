@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Culture House</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark:   '#0A1118',
+                            darker: '#05080C',
+                            panel:  '#0F1825',
+                            card:   '#131C2A',
+                            line:   '#1E2A3D',
+                            blue:   '#1A47E5',
+                            cyan:   '#00AEEF',
+                            yellow: '#FFEA00',
+                            white:  '#FFFFFF',
+                            muted:  '#8FA0B8',
+                            mutedDim: '#6B7A91',
+                            red:    '#FF3B30'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Bebas Neue', 'sans-serif'],
+                        body: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #F5F7FB; color: #0A1118; -webkit-font-smoothing: antialiased; }
+
+        /* Sidebar scrollbar */
+        .sidebar-scroll::-webkit-scrollbar { width: 6px; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #1E2A3D; border-radius: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: #2A3A55; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 18px;
+            color: #FFFFFF;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.01em;
+            border-left: 3px solid transparent;
+            transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+        }
+        .nav-link:hover {
+            background-color: rgba(26, 71, 229, 0.12);
+            border-left-color: #1A47E5;
+        }
+        .nav-link.active {
+            background-color: rgba(26, 71, 229, 0.20);
+            border-left-color: #00AEEF;
+            color: #FFFFFF;
+        }
+        .nav-link svg { color: #8FA0B8; flex-shrink: 0; }
+        .nav-link:hover svg, .nav-link.active svg { color: #FFFFFF; }
+
+        .nav-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 18px 18px 8px 18px;
+            color: #00AEEF;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        .nav-group-header .chev {
+            color: #6B7A91;
+            transition: transform 200ms ease;
+        }
+        .nav-group.collapsed .nav-group-body { display: none; }
+        .nav-group.collapsed .chev { transform: rotate(-90deg); }
+
+        .nav-sub {
+            color: #FFFFFF;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 8px 18px 8px 52px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 3px solid transparent;
+            transition: background-color 120ms ease, border-color 120ms ease;
+        }
+        .nav-sub:hover {
+            background-color: rgba(255,255,255,0.04);
+            border-left-color: #1A47E5;
+        }
+        .nav-sub .dot {
+            width: 4px; height: 4px; border-radius: 9999px; background-color: #6B7A91;
+        }
+        .nav-sub:hover .dot { background-color: #00AEEF; }
+
+        /* Collapsed sidebar */
+        .sidebar.collapsed { width: 76px; }
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .nav-group-header span:not(.chev),
+        .sidebar.collapsed .nav-group-body,
+        .sidebar.collapsed .brand-text,
+        .sidebar.collapsed .user-text,
+        .sidebar.collapsed .collapse-text { display: none; }
+        .sidebar.collapsed .nav-link { justify-content: center; padding: 14px 0; }
+        .sidebar.collapsed .nav-group-header { justify-content: center; padding: 12px 0; }
+    </style>
+</head>
+<body class="font-body">
+
+<div class="flex min-h-screen">
+
+    <!-- ============== SIDEBAR ============== -->
+    <aside id="sidebar" class="sidebar w-72 bg-brand-darker border-r border-brand-line flex flex-col fixed inset-y-0 left-0 z-40 transition-all duration-200">
+
+        <!-- Brand -->
+        <div class="px-5 py-5 border-b border-brand-line flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-brand-blue flex items-center justify-center shadow-lg flex-shrink-0">
+                <span class="font-display text-white text-2xl leading-none">CH</span>
+            </div>
+            <div class="brand-text">
+                <p class="font-display text-white text-2xl leading-none tracking-wider">CULTURE HOUSE</p>
+                <p class="text-brand-cyan text-[10px] font-bold tracking-[0.25em] uppercase mt-1">Operator Console</p>
+            </div>
+        </div>
+
+        <!-- Nav -->
+        <nav class="sidebar-scroll flex-1 overflow-y-auto py-2">
+
+            <!-- DASHBOARD (single link, top level) -->
+            <a href="#" class="nav-link active mt-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg>
+                <span class="nav-text">Dashboard</span>
+            </a>
+
+            <!-- SALES PIPELINE -->
+            <div class="nav-group" data-group="sales">
+                <button type="button" class="nav-group-header" onclick="toggleGroup(this)">
+                    <span>Sales Pipeline</span>
+                    <svg class="chev w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="nav-group-body">
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Invoices &amp; Posts</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Orders</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Onboarding Submissions</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Offers &amp; Pricing</span></a>
+                </div>
+            </div>
+
+            <!-- OUTREACH -->
+            <div class="nav-group" data-group="outreach">
+                <button type="button" class="nav-group-header" onclick="toggleGroup(this)">
+                    <span>Outreach</span>
+                    <svg class="chev w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="nav-group-body">
+                    <!-- Send -->
+                    <p class="px-[18px] pt-3 pb-1 text-[10px] font-bold tracking-[0.22em] uppercase text-brand-mutedDim">Send</p>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Compose &amp; Send</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Email Flows</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Programmatic Posts</span></a>
+
+                    <!-- Contacts -->
+                    <p class="px-[18px] pt-3 pb-1 text-[10px] font-bold tracking-[0.22em] uppercase text-brand-mutedDim">Contacts</p>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Contacts</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Add Contacts</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Rackspace Import</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Blacklist</span></a>
+
+                    <!-- Prospecting -->
+                    <p class="px-[18px] pt-3 pb-1 text-[10px] font-bold tracking-[0.22em] uppercase text-brand-mutedDim">Prospecting</p>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Vertical Prospector</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Buyer Prospector</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Agency Prospector</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Competitor Intel</span></a>
+
+                    <!-- Inbox -->
+                    <p class="px-[18px] pt-3 pb-1 text-[10px] font-bold tracking-[0.22em] uppercase text-brand-mutedDim">Inbox</p>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Today's Plan</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Lead Inbox</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Lead Alerts</span></a>
+                </div>
+            </div>
+
+            <!-- REPORTS -->
+            <div class="nav-group collapsed" data-group="reports">
+                <button type="button" class="nav-group-header" onclick="toggleGroup(this)">
+                    <span>Reports</span>
+                    <svg class="chev w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="nav-group-body">
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Overview</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Revenue</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Outreach Performance</span></a>
+                </div>
+            </div>
+
+            <!-- WEBSITE -->
+            <div class="nav-group collapsed" data-group="website">
+                <button type="button" class="nav-group-header" onclick="toggleGroup(this)">
+                    <span>Website</span>
+                    <svg class="chev w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="nav-group-body">
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Pages</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>SEO</span></a>
+                    <a href="#" class="nav-sub"><span class="dot"></span><span>Forms</span></a>
+                </div>
+            </div>
+
+            <!-- SETTINGS -->
+            <div class="px-[18px] pt-6 pb-2">
+                <p class="text-brand-cyan text-[11px] font-extrabold tracking-[0.22em] uppercase">Settings</p>
+            </div>
+            <a href="#" class="nav-link">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 11-8 0 4 4 0 018 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h2m14 0h2M12 3v2m0 14v2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M5.6 18.4L7 17m10-10l1.4-1.4"/></svg>
+                <span class="nav-text">Sender</span>
+            </a>
+            <a href="#" class="nav-link">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span class="nav-text">Account</span>
+            </a>
+            <a href="#" class="nav-link">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <span class="nav-text">Log out</span>
+            </a>
+        </nav>
+
+        <!-- Collapse Button -->
+        <div class="border-t border-brand-line p-3">
+            <button id="collapse-btn" onclick="toggleSidebar()" class="w-full flex items-center justify-center gap-2 text-brand-muted hover:text-white text-sm font-semibold py-2 rounded transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
+                <span class="collapse-text">Collapse</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ============== MAIN ============== -->
+    <main id="main" class="flex-1 ml-72 transition-all duration-200">
+
+        <!-- Topbar -->
+        <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-gray-200 px-8 py-4 flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">Operator Console</p>
+                <h1 class="font-display text-3xl text-brand-dark tracking-wide">Dashboard</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hidden md:flex items-center gap-2 bg-gray-100 rounded-md px-3 py-2 w-72">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+                    <input type="text" placeholder="Search leads, orders, contacts…" class="bg-transparent text-sm font-medium text-brand-dark placeholder-gray-400 focus:outline-none flex-1">
+                </div>
+                <button class="relative w-10 h-10 rounded-md hover:bg-gray-100 flex items-center justify-center text-gray-500">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .53-.21 1.04-.59 1.41L4 17h5m6 0a3 3 0 11-6 0"/></svg>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-red"></span>
+                </button>
+                <div class="flex items-center gap-2 pl-2">
+                    <div class="w-9 h-9 rounded-full bg-brand-blue flex items-center justify-center text-white text-sm font-extrabold">KW</div>
+                    <div class="hidden md:block">
+                        <p class="text-sm font-bold text-brand-dark leading-tight">Kawani</p>
+                        <p class="text-xs text-gray-500">Owner</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="px-8 py-8 space-y-8">
+
+            <!-- KPI ROW -->
+            <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs font-extrabold tracking-[0.18em] uppercase text-gray-400">Revenue (MTD)</p>
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">+12.4%</span>
+                    </div>
+                    <p class="font-display text-4xl text-brand-dark mt-2">$48,250</p>
+                    <p class="text-xs text-gray-500 mt-1">vs. $42,920 last month</p>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs font-extrabold tracking-[0.18em] uppercase text-gray-400">Open Orders</p>
+                        <span class="text-xs font-bold text-brand-blue bg-blue-50 px-2 py-1 rounded-full">14 active</span>
+                    </div>
+                    <p class="font-display text-4xl text-brand-dark mt-2">27</p>
+                    <p class="text-xs text-gray-500 mt-1">7 awaiting onboarding</p>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs font-extrabold tracking-[0.18em] uppercase text-gray-400">Lead Inbox</p>
+                        <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-full">12 unread</span>
+                    </div>
+                    <p class="font-display text-4xl text-brand-dark mt-2">38</p>
+                    <p class="text-xs text-gray-500 mt-1">5 hot replies today</p>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs font-extrabold tracking-[0.18em] uppercase text-gray-400">Outreach Sent</p>
+                        <span class="text-xs font-bold text-gray-700 bg-gray-100 px-2 py-1 rounded-full">7 days</span>
+                    </div>
+                    <p class="font-display text-4xl text-brand-dark mt-2">1,284</p>
+                    <p class="text-xs text-gray-500 mt-1">Open rate 42%, reply 6.3%</p>
+                </div>
+            </section>
+
+            <!-- TWO-COL: Today's Plan / Recent Activity -->
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-sm">
+                    <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                        <h2 class="font-display text-2xl text-brand-dark tracking-wide">Today's Plan</h2>
+                        <a href="#" class="text-sm font-bold text-brand-blue hover:underline">Open queue →</a>
+                    </div>
+                    <ul class="divide-y divide-gray-100">
+                        <li class="p-5 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <div>
+                                <p class="font-bold text-brand-dark">Follow up: Brooklyn Roastery</p>
+                                <p class="text-sm text-gray-500">Onboarding pending — last contact 3 days ago</p>
+                            </div>
+                            <button class="text-xs font-bold uppercase tracking-widest bg-brand-blue text-white px-4 py-2 rounded-md hover:bg-brand-darker">Send</button>
+                        </li>
+                        <li class="p-5 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <div>
+                                <p class="font-bold text-brand-dark">Invoice review: Highline Studios</p>
+                                <p class="text-sm text-gray-500">Net 15 — due in 4 days</p>
+                            </div>
+                            <button class="text-xs font-bold uppercase tracking-widest bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-black">Review</button>
+                        </li>
+                        <li class="p-5 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <div>
+                                <p class="font-bold text-brand-dark">Prospect batch: Agency vertical</p>
+                                <p class="text-sm text-gray-500">120 contacts queued — awaiting your approval</p>
+                            </div>
+                            <button class="text-xs font-bold uppercase tracking-widest border border-gray-300 text-brand-dark px-4 py-2 rounded-md hover:border-brand-blue hover:text-brand-blue">Approve</button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
+                    <div class="p-5 border-b border-gray-100">
+                        <h2 class="font-display text-2xl text-brand-dark tracking-wide">Lead Alerts</h2>
+                    </div>
+                    <ul class="divide-y divide-gray-100">
+                        <li class="p-4 flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-brand-red mt-2 flex-shrink-0"></span>
+                            <div>
+                                <p class="font-bold text-brand-dark text-sm">Hot reply from Ana M.</p>
+                                <p class="text-xs text-gray-500">Wants pricing — 14 min ago</p>
+                            </div>
+                        </li>
+                        <li class="p-4 flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-amber-500 mt-2 flex-shrink-0"></span>
+                            <div>
+                                <p class="font-bold text-brand-dark text-sm">Form submission: Onboarding</p>
+                                <p class="text-xs text-gray-500">Skyline Events — 1 hour ago</p>
+                            </div>
+                        </li>
+                        <li class="p-4 flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-brand-blue mt-2 flex-shrink-0"></span>
+                            <div>
+                                <p class="font-bold text-brand-dark text-sm">New buyer match</p>
+                                <p class="text-xs text-gray-500">Vertical prospector — 2 hours ago</p>
+                            </div>
+                        </li>
+                        <li class="p-4 flex items-start gap-3">
+                            <span class="w-2 h-2 rounded-full bg-gray-400 mt-2 flex-shrink-0"></span>
+                            <div>
+                                <p class="font-bold text-brand-dark text-sm">Competitor post detected</p>
+                                <p class="text-xs text-gray-500">Greene St. Co — 5 hours ago</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<script>
+    function toggleGroup(btn) {
+        const group = btn.closest('.nav-group');
+        group.classList.toggle('collapsed');
+    }
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        sidebar.classList.toggle('collapsed');
+        if (sidebar.classList.contains('collapsed')) {
+            main.classList.remove('ml-72');
+            main.classList.add('ml-[76px]');
+        } else {
+            main.classList.remove('ml-[76px]');
+            main.classList.add('ml-72');
+        }
+    }
+</script>
+</body>
+</html>
